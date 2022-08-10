@@ -3,8 +3,11 @@
 
 #include "z64.h"
 
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
+typedef void (*playsfx_t)		(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+typedef void (*usebutton_t)		(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
+typedef void (*setitem_t)		(z64_game_t *game, uint8_t item);
+typedef void (*setitembutton_t)	(z64_game_t *game, uint8_t item, uint8_t button);
+typedef void (*setitemslot_t)	(z64_game_t *game, uint8_t item, uint8_t slot);
 
 typedef enum {
 	DPAD_NULL			= 0x0,
@@ -69,7 +72,7 @@ typedef enum {
 } limit_item_t;
 
 typedef struct {
-	char		item[0x002C];
+	char item[0x002C];
 } z64_usability_t;
 
 typedef struct {
@@ -80,12 +83,21 @@ typedef struct {
 	uint16_t	bullet_bag[4];		// 0,  30,  40,  50
 	uint16_t	stick_upgrade[4];	// 0,  20,  30,  40
 	uint16_t	nut_upgrade[4];		// 0,  10,  20,  30
-	
 } z64_capacity;
+
+typedef union PressedButtons {
+    struct {
+		uint8_t r;
+		uint8_t z;
+    };
+} PressedButtons;
 
 /* Functions */
 #define z64_playsfx						((playsfx_t)			0x800C806C)
 #define z64_usebutton					((usebutton_t)			0x8038C9A0)
+#define z64_setitem						((setitem_t)			0x8006FDCC)
+#define z64_setitembutton				((setitembutton_t)		0x80071B7C)
+#define z64_setitemslot					((setitemslot_t)		0x8007140C)
 
 /* DRAM addresses & data */
 #define z64_usability					(*(z64_usability_t*)	0x8039F114)

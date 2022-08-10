@@ -16,7 +16,7 @@ uint16_t dpad_x				= 0;
 uint16_t dpad_y				= 0;
 uint16_t last_mask			= 0;
 
-extern uint8_t CHECKED_LENS;
+extern uint8_t checked_lens;
 
 void handle_dpad() {
 	handle_buttons();
@@ -40,9 +40,9 @@ void handle_dpad_ingame() {
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
 	if (CFG_DPAD_ENABLED == 2) {
-		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) ) {
+		if (z64_game.common.input[0].raw.pad.l && pad_pressed.r) {
 			dpad_alt ^= 1;
-			CHECKED_LENS = 0;
+			checked_lens = 0;
 			if (dpad_alt)
 				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 			else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);

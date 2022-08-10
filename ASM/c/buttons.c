@@ -13,8 +13,7 @@ uint8_t hud_hide		= 0;
 uint8_t hud_hearts_hide	= 1;
 uint8_t hud_counter		= 0;
 uint8_t block			= 0;
-uint8_t pressed_r		= 0;
-uint8_t pressed_z		= 0;
+PressedButtons pressed;
 
 void handle_buttons() {
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
@@ -32,32 +31,28 @@ void handle_l_button() {
 	if (z64_game.pause_ctxt.state != 0 && z64_game.pause_ctxt.state != 6)
 		return;
 	
-	pad_t pad_released = z64_game.common.input[0].pad_released;
+	pad_t pad_curr = z64_game.common.input[0].raw.pad;
 	
-	if (z64_game.common.input[0].raw.pad.r)
-		pressed_r = 1;
-	if (z64_game.common.input[0].raw.pad.z)
-		pressed_z = 1;
-	if (pad_released.l && !pressed_r && !pressed_z) {
+	if (pad_curr.r)
+		pressed.r = 1;
+	if (pad_curr.z)
+		pressed.z = 1;
+	
+	if (z64_game.common.input[0].pad_released.l && !pressed.r && !pressed.z) {
 		toggle_minimap();
 		hide_hud();
 		inventory_editor();
 		handle_downgrading();
 	}
-	if (!z64_game.common.input[0].raw.pad.l)
-		pressed_r = pressed_z = 0;
 	
-	if (z64_game.common.input[0].pad_pressed.l && !z64_game.common.input[0].raw.pad.r)
+	if (!pad_curr.l)
+		pressed.r = pressed.z = 0;
+	if (z64_game.common.input[0].pad_pressed.l)
 		block = 1;
-	else if (z64_game.common.input[0].pad_pressed.l && !z64_game.common.input[0].raw.pad.z)
-		block = 1;
-	if (!z64_game.common.input[0].raw.pad.l)
+	if (!pad_curr.l)
 		block = 0;
-	
-	if (block) {
-		z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
-		z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
-	}
+	if (block)
+		z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].raw.pad.z = 0;
 	
 	z64_game.common.input[0].pad_pressed.l = 0;	
 }

@@ -11,7 +11,7 @@ void handle_fps() {
 	if (!CFG_FPS_ENABLED || z64_game.pause_ctxt.state != 0)
 		return;
 	
-	if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) ) {
+	if (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) {
 		fps_switch ^= 1;
 		if (fps_switch)
 			z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
