@@ -13,6 +13,7 @@ uint8_t hud_hide		= 0;
 uint8_t hud_hearts_hide	= 1;
 uint8_t hud_counter		= 0;
 uint8_t block			= 0;
+uint8_t moved_layout    = 0;
 PressedButtons pressed;
 
 void handle_buttons() {
@@ -58,10 +59,13 @@ void handle_l_button() {
 }
 
 void handle_layout() {
-	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || z64_gameinfo.a_button_y == 9)
+	if (z64_gameinfo.a_button_y == 9)
+		moved_layout = 0;
+	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || moved_layout)
 		return;
 	
 	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
+	moved_layout = 1;
 	
 	if (CFG_HUD_LAYOUT == 1) { // Majora's Mask
 		a_x			= 4;	// 186	->	190
