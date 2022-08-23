@@ -59,9 +59,11 @@ void handle_l_button() {
 }
 
 void handle_layout() {
+	if (CFG_HUD_LAYOUT == 0)
+		return;
 	if (z64_gameinfo.a_button_y == 9)
 		moved_layout = 0;
-	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || moved_layout)
+	if (!CAN_DRAW_HUD || moved_layout)
 		return;
 	
 	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
