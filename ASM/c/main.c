@@ -7,6 +7,7 @@
 #include "text.h"
 #include "util.h"
 #include "dpad.h"
+#include "boss_rush.h"
 #include "misc_colors.h"
 #include "hud_colors.h"
 #include "z64.h"
@@ -51,4 +52,5 @@ void after_scene_init() {
     //clear_twinrova_vars();
     //models_reset();
     //extern_scene_init();
+	set_progress();
 }
