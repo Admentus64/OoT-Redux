@@ -117,17 +117,6 @@ Gameplay_InitSkybox:
     ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
 
 ;==================================================================================================
-; Initial save
-;==================================================================================================
-
-; Replaces:
-;   sb      t0, 32(s1)
-;   sb      a1, 33(s1)
-.orga 0xB06C2C ; In memory: ???
-    jal     write_initial_save
-    sb      t0, 32(s1)
-
-;==================================================================================================
 ; Empty Bomb Fix
 ;==================================================================================================
 
@@ -220,9 +209,9 @@ Gameplay_InitSkybox:
 ;
 ; Replaces lw    t6, 0x1C44(s6)
 ;          lui   t8, 0xDB06
-.orga 0xAEB67C ; In Memory: 0x8007571C
-    jal     dpad_draw
-    nop
+;.orga 0xAEB67C ; In Memory: 0x8007571C
+;    jal     dpad_draw
+;    nop
 
 ;==================================================================================================
 ; Stone of Agony indicator
@@ -640,3 +629,38 @@ Gameplay_InitSkybox:
 .orga 0xCEA41C
     jal     volvagia_flying_hitbox
     nop
+
+
+
+
+;===================================================================================================
+; Connect Interface functions to Redux
+;===================================================================================================
+
+.orga 0xBCF814 ; In memory: 0x8038A804
+    j       player_process_item_buttons
+    nop
+
+.orga 0xAE7ADC ; In memory: 0x80071B7C
+    j       player_update_bottle_item
+    nop
+    
+.orga 0xAE3888
+    j       interface_raise_button_alphas
+    nop
+    
+.orga 0xAE39AC
+    j       interface_dim_button_alphas
+    nop
+
+.orga 0xAE3A80
+    j      interface_update_hud_alphas
+    nop
+    
+.orga 0xAE3848
+    j      interface_change_hud_visibility_mode
+    nop
+    
+ ;.orga 0xAE42A0
+ ;   j      interface_enable_buttons
+ ;   nop
