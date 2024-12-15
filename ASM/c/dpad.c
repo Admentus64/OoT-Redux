@@ -25,8 +25,10 @@ bool init_done       = false;
 u8   compare_frames;
 
 void handle_dpad() {
-    if (z64_file.game_mode != 0)
+    if (z64_file.game_mode != 0) {
+        init_done = false;
         return;
+    }
     
     compare_frames = 60 / fps_limit;
     
@@ -116,6 +118,8 @@ void handle_dpad() {
         
         if (CFG_TYCOON_WALLET && z64_file.gs_tokens >= 40 && z64_file.wallet == 2 && TYCOON_WALLET)
             z64_file.wallet = 3;
+        
+        run_default_options_setup();
     }
 }
 

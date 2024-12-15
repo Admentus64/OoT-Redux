@@ -40,5 +40,4 @@ void before_skybox_init(z64_game_t* game, s16 skyboxId) {
 
 void after_scene_init() {
     last_scene = z64_game.scene_index;
-    run_default_options_setup();
 }

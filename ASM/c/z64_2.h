@@ -459,7 +459,7 @@ typedef enum {
 /* D-Pad & Controls Availability */
 #define BLOCK_DPAD                      (PLAYER_STATE1_EXITING | PLAYER_STATE1_SWINGING_BOTTLE | PLAYER_STATE1_DEATH | PLAYER_STATE1_OPENING_CHEST | PLAYER_STATE1_PLAYING_OCARINA | PLAYER_STATE1_NO_CONTROL)
 #define CAN_USE_DPAD                    ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0 && (u32)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
-#define CAN_DRAW_HUD                    ( ( (u32)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
+#define CAN_DRAW_HUD                    ( ( (u32)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) )
 #define CAN_USE_SWAP(index)             (IS_PAUSE_SCREEN_CURSOR && (z64_game.pause_ctxt.mainState == 0 || z64_game.pause_ctxt.mainState == 3) && z64_game.pause_ctxt.pageIndex == index)
 #define CAN_USE_MASK_SWAP               (CAN_USE_SWAP(0) && z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM]  == Z64_SLOT_CHILD_TRADE && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && GET_INFTABLE(INFTABLE_GIVEN_ZELDAS_LETTER) && \
                                         z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_KEATON_MASK && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) 

@@ -703,7 +703,7 @@ void interface_raise_button_alphas(z64_game_t* game, u8 rising_alpha) {
             *button_alphas[i] = rising_alpha;
     }
     
-    if (!CAN_USE_DPAD) {
+    if ((z64_link.state_flags_1 & PLAYER_STATE1_CLIMBING) || (z64_link.state_flags_2 & PLAYER_STATE2_CRAWLING)) {
         if (dpad_alpha != 70)
             dpad_alpha = 70;
     }
