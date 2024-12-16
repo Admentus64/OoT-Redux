@@ -19,6 +19,7 @@
 #define SCENE_CLEAR   4
 #define CARPENTERS    5
 #define NABOORU       6
+#define MASK          7
 
 #define WARPS         0
 #define UPGRADES      1

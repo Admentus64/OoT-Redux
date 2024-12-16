@@ -350,7 +350,7 @@ static progression_t progressions[] = {
     { "Opened Jabu-Jabu",        EVENT,       EVENTCHKINF_OPENED_JABU_JABU,           0                          },
     { "Opened Door of Time",     EVENT,       EVENTCHKINF_OPENED_DOOR_OF_TIME,        0                          },
     { "Pulled Master Sword",     EVENT,       EVENTCHKINF_MASTER_SWORD_CS,            0                          },
-    { "Woken Talon Kakariko",     EVENT,       EVENTCHKINF_TALON_WOKEN_IN_KAKARIKO,   0                          },
+    { "Woken Talon Kakariko",    EVENT,       EVENTCHKINF_TALON_WOKEN_IN_KAKARIKO,    0                          },
     { "Epona Obtained",          EVENT,       EVENTCHKINF_EPONA_OBTAINED,             0                          },
     { "Race Cow Unlocked",       EVENT,       EVENTCHKINF_HORSE_RACE_COW_UNLOCK,      0                          },
     { "Carpenters Freed",        CARPENTERS,  EVENTCHKINF_CARPENTERS_FREE(0),         0                          },
@@ -373,6 +373,21 @@ static progression_t progressions[] = {
     { "Killed Bongo Bongo",      SCENE_CLEAR, 1,                                      SCENE_SHADOW_TEMPLE_BOSS   },
     { "Killed Nabooru",          NABOORU,     5,                                      SCENE_SPIRIT_TEMPLE_BOSS   },
     { "Killed Twinrova",         SCENE_CLEAR, 3,                                      SCENE_SPIRIT_TEMPLE_BOSS   },
+    { "Completed Mask Quest",    MASK,        0,                                      0                          },
+  /*{ "Borrowed Keaton Mask",    ITEM,        ITEMGETINF_BORROWED_KEATON_MASK,        0                          },
+    { "Borrowed Skull Mask",     ITEM,        ITEMGETINF_BORROWED_SKULL_MASK,         0                          },
+    { "Borrowed Spooky Mask",    ITEM,        ITEMGETINF_BORROWED_SPOOKY_MASK,        0                          },
+    { "Borrowed Bunny Hood",     ITEM,        ITEMGETINF_BORROWED_BUNNY_HOOD,         0                          },
+    { "Sold Keaton Mask",        ITEM,        ITEMGETINF_SOLD_KEATON_MASK,            0                          },
+    { "Sold Skull Mask",         ITEM,        ITEMGETINF_SOLD_SKULL_MASK,             0                          },
+    { "Sold Spooky Mask",        ITEM,        ITEMGETINF_SOLD_SPOOKY_MASK,            0                          },
+    { "Sold Bunny Hood",         ITEM,        ITEMGETINF_SOLD_BUNNY_HOOD,             0                          },
+    { "Paid Back Keaton Mask",   EVENT,       EVENTCHKINF_PAID_BACK_KEATON_MASK,      0                          },
+    { "Paid Back Skull Mask",    EVENT,       EVENTCHKINF_PAID_BACK_SKULL_MASK,       0                          },
+    { "Paid Back Spooky Mask",   EVENT,       EVENTCHKINF_PAID_BACK_SPOOKY_MASK,      0                          },
+    { "Paid Back Bunny Hood",    EVENT,       EVENTCHKINF_PAID_BACK_BUNNY_HOOD,       0                          },
+    { "Other Masks Available",   ITEM,        ITEMGETINF_OTHER_MASKS_AVAILABLE,       0                          },
+    { "Mask of Truth Loaned",    ITEM,        ITEMGETINF_MASK_OF_TRUTH_LOANED,        0                          },*/
 };
 
 const static rooms_t dungeon_rooms[] = {
@@ -557,30 +572,44 @@ void handle_map_select() {
                             break;
                         case CARPENTERS:
                             if (!GET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(0))) {
-                                SET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(0));
-                                SET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(1));
-                                SET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(2));
-                                SET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(3));
+                                for (u8 i=0; i<4; i++)
+                                    SET_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(i));
                             }
                             else {
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(0));
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(1));
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(2));
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(3));
+                                for (u8 i=0; i<4; i++)
+                                    CLEAR_EVENTCHKINF(EVENTCHKINF_CARPENTERS_FREE(i));
                             }
                             break;
                         case NABOORU:
+                            u16 nabooru_event_flags[] = { EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE, EVENTCHKINF_STARTED_NABOORU_KNUCKLE, EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE_CS };
+
                             if (!GET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE)) {
-                                SET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE);
-                                SET_EVENTCHKINF(EVENTCHKINF_STARTED_NABOORU_KNUCKLE);
-                                SET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE_CS);
+                                for (u8 i=0; i<sizeof(nabooru_event_flags)/sizeof(nabooru_event_flags[0]); i++)
+                                    SET_EVENTCHKINF(nabooru_event_flags[i]);
                                 z64_file.scene_flags[progression.scene_id].swch |= (1 << progression.flag);
                             }
                             else {
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE);
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_STARTED_NABOORU_KNUCKLE);
-                                CLEAR_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE_CS);
+                                for (u8 i=0; i<sizeof(nabooru_event_flags)/sizeof(nabooru_event_flags[0]); i++)
+                                    CLEAR_EVENTCHKINF(nabooru_event_flags[i]);
                                 z64_file.scene_flags[progression.scene_id].swch &= ~(1 << progression.flag);
+                            }
+                            break;
+                        case MASK:
+                            u16 item_flags[]  = { ITEMGETINF_BORROWED_KEATON_MASK, ITEMGETINF_BORROWED_SKULL_MASK, ITEMGETINF_BORROWED_SPOOKY_MASK, ITEMGETINF_BORROWED_BUNNY_HOOD,   ITEMGETINF_SOLD_KEATON_MASK,
+                                                            ITEMGETINF_SOLD_SKULL_MASK,      ITEMGETINF_SOLD_SPOOKY_MASK,    ITEMGETINF_SOLD_BUNNY_HOOD,      ITEMGETINF_OTHER_MASKS_AVAILABLE, ITEMGETINF_MASK_OF_TRUTH_LOANED };
+                            u16 event_flags[] = { EVENTCHKINF_PAID_BACK_KEATON_MASK, EVENTCHKINF_PAID_BACK_SKULL_MASK, EVENTCHKINF_PAID_BACK_SPOOKY_MASK, EVENTCHKINF_PAID_BACK_BUNNY_HOOD };
+                        
+                            if (!GET_ITEMGETINF(ITEMGETINF_BORROWED_KEATON_MASK)) {
+                                for (u8 i=0; i<sizeof(item_flags)/sizeof(item_flags[0]); i++)
+                                    SET_ITEMGETINF(item_flags[i]);
+                                for (u8 i=0; i<sizeof(event_flags)/sizeof(event_flags[0]); i++)
+                                    SET_EVENTCHKINF(event_flags[i]);
+                            }
+                            else {
+                                for (u8 i=0; i<sizeof(item_flags)/sizeof(item_flags[0]); i++)
+                                    CLEAR_ITEMGETINF(item_flags[i]);
+                                for (u8 i=0; i<sizeof(event_flags)/sizeof(event_flags[0]); i++)
+                                    CLEAR_EVENTCHKINF(event_flags[i]);
                             }
                             break;
                     }
@@ -746,6 +775,10 @@ void draw_items(void* items, u8 index, u16 elements, u8 type) {
                         break;
                     case NABOORU:
                         save = (GET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE) && GET_EVENTCHKINF(EVENTCHKINF_STARTED_NABOORU_KNUCKLE) && GET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE_CS) && (z64_file.scene_flags[progressions[curr].scene_id].swch &= (1 << progressions[curr].flag))) ? 1 : 0;
+                        break;
+                    case MASK:
+                        save = GET_ITEMGETINF(ITEMGETINF_OTHER_MASKS_AVAILABLE) ? 1 : 0;
+                        break;
                 }
             
                 name     = progressions[curr].name;
