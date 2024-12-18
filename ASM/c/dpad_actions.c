@@ -530,7 +530,7 @@ void update_c_button_bottle_item(z64_game_t* game, z64_item_t item, z64_item_but
 void player_process_item_buttons(z64_link_t* link, z64_game_t* game) {
     u8 index = 0;
     
-    if (link->current_mask != PLAYER_MASK_NONE) {
+    if (link->current_mask != PLAYER_MASK_NONE && !(link->state_flags_1 & (PLAYER_STATE1_CLIMBING | PLAYER_STATE1_SWIMMING) ) ) {
         u8 mask_item_action = link->current_mask - 1 + PLAYER_IA_MASK_KEATON;
         if (!player_item_is_item_action(C_BTN_ITEM(0), mask_item_action)        && !player_item_is_item_action(C_BTN_ITEM(1), mask_item_action)        && !player_item_is_item_action(C_BTN_ITEM(2), mask_item_action)        && \
             !player_item_is_item_action(get_dpad_btn_item(0), mask_item_action) && !player_item_is_item_action(get_dpad_btn_item(1), mask_item_action) && !player_item_is_item_action(get_dpad_btn_item(2), mask_item_action) && !player_item_is_item_action(get_dpad_btn_item(3), mask_item_action))
