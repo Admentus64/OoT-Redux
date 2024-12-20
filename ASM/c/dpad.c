@@ -40,11 +40,11 @@ void handle_dpad() {
     FAST_BUNNY_HOOD_ENABLED = OPTION_ACTIVE(1, SAVE_MASK_ABILITIES, CFG_DEFAULT_MASK_ABILITIES);
     restore_spawner_backup(&z64_game);
     if (FAST_BUNNY_HOOD_ENABLED && CAN_CONTROL_LINK) {
-        z64_check_lava_floor    = z64_link.current_mask == PLAYER_MASK_GORON  ? 0x1000     : 0x0440;
-        z64_check_lava_trail_1  = z64_link.current_mask == PLAYER_MASK_SPOOKY ? 0x0        : 0x2;
-        z64_check_lava_trail_2  = z64_link.current_mask == PLAYER_MASK_SPOOKY ? 0xC        : 0x3;
-        z64_check_freeze        = z64_link.current_mask == PLAYER_MASK_KEATON ? 0x1000     : 0x1461;
-        z64_check_shock         = z64_link.current_mask == PLAYER_MASK_GERUDO ? 0x1000     : 0x1461;
+        z64_check_lava_floor    = z64_link.current_mask == PLAYER_MASK_GORON  ? 0x1000 : 0x0440;
+        z64_check_lava_trail_1  = z64_link.current_mask == PLAYER_MASK_SPOOKY ? 0x0    : 0x2;
+        z64_check_lava_trail_2  = z64_link.current_mask == PLAYER_MASK_SPOOKY ? 0xC    : 0x3;
+        z64_check_freeze        = z64_link.current_mask == PLAYER_MASK_KEATON ? 0x1000 : 0x1461;
+        z64_check_shock         = z64_link.current_mask == PLAYER_MASK_GERUDO ? 0x1000 : 0x1461;
         remove_enemy_spawner();
         remove_falling_rocks_spawner();
         
@@ -72,6 +72,7 @@ void handle_dpad() {
     handle_l_button();
     handle_l_button_paused();
     handle_infinite();   
+    interface_enable_swimming();
 
     if (z64_game.pause_ctxt.debugState != 0) {
         z64_x_axis_input = z64_y_axis_input = 0;
@@ -338,4 +339,57 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
     gDPSetPrimColor(db->p++, 0, 0, rgb, rgb, rgb, dpad_alpha);
     sprite_load_and_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
     draw_dpad_actions(db, dpad_alpha);
+}
+
+void interface_enable_swimming() {
+    bool refresh_interface = false;
+    
+    if (!z64_game.msgContext.msgMode)
+        if ((Player_GetEnvironmentalHazard(&z64_game) >= PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) && (Player_GetEnvironmentalHazard(&z64_game) <= PLAYER_ENV_HAZARD_UNDERWATER_FREE)) {
+            if (z64_file.button_status[0] != BTN_DISABLED)
+                refresh_interface = true;
+            z64_file.button_status[0] = BTN_DISABLED;
+            
+            for (u8 i=1; i<4; i++) {
+                if (Player_GetEnvironmentalHazard(&z64_game) == PLAYER_ENV_HAZARD_UNDERWATER_FLOOR) {
+                    if (z64_file.button_items[i] != Z64_ITEM_HOOKSHOT && z64_file.button_items[i] != Z64_ITEM_LONGSHOT) {
+                        if (z64_file.button_status[i] == BTN_ENABLED)
+                            refresh_interface = true;
+                        z64_file.button_status[i] = BTN_DISABLED;
+                    }
+                    else {
+                        if (z64_file.button_status[i] == BTN_DISABLED)
+                            refresh_interface = true;
+                        z64_file.button_status[i] = BTN_ENABLED;
+                    }
+                }
+                else if (Player_GetEnvironmentalHazard(&z64_game) == PLAYER_ENV_HAZARD_SWIMMING && OPTION_ACTIVE(1, SAVE_MASK_ABILITIES, CFG_DEFAULT_MASK_ABILITIES)) {
+                    if (z64_file.button_items[i] < Z64_ITEM_KEATON_MASK || z64_file.button_items[i] > Z64_ITEM_MASK_OF_TRUTH) {
+                        if (z64_file.button_status[i] == BTN_ENABLED)
+                            refresh_interface = true;
+                        z64_file.button_status[i] = BTN_DISABLED;
+                    }
+                    else {
+                        if (z64_file.button_status[i] == BTN_DISABLED)
+                            refresh_interface = true;
+                        z64_file.button_status[i] = BTN_ENABLED;
+                    }
+                }
+                else {
+                    if (z64_file.button_status[i] == BTN_ENABLED)
+                        refresh_interface = true;
+                    z64_file.button_status[i] = BTN_DISABLED;
+                }
+            }
+            
+            if (refresh_interface)
+                z64_file.hud_visibility_mode = HUD_VISIBILITY_NO_CHANGE;
+            interface_change_hud_visibility_mode(HUD_VISIBILITY_ALL);
+        }
+    
+    if (refresh_interface) {
+        z64_file.hud_visibility_mode = HUD_VISIBILITY_NO_CHANGE;
+        if (!z64_game.scene_load_flag && !z64_game.transition_mode)
+            interface_change_hud_visibility_mode(HUD_VISIBILITY_ALL);
+    }
 }

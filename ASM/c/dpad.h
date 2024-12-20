@@ -44,5 +44,6 @@ void draw_name_panel(      z64_disp_buf_t* db);
 void draw_settings_label(  z64_disp_buf_t* db);
 void draw_swap_item_icons( z64_disp_buf_t* db, z64_item_t curr_item, z64_item_t next_item);
 void draw_dpad_icons(      z64_disp_buf_t* db);
+void interface_enable_swimming();
 
 #endif

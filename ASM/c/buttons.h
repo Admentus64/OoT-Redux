@@ -22,7 +22,7 @@ void handle_infinite();
 void interface_raise_button_alphas(       z64_game_t* game,         u8 rising_alpha);
 void interface_dim_button_alphas(         z64_game_t* game,         u8 dimming_alpha, u8 rising_alpha);
 void interface_Update_hud_alphas(         z64_game_t* game,         u8 dimming_alpha);
-void interface_change_hud_visibility_mode(z64_hud_visibility_mode_t hud_visibility_mode);
+void interface_change_hud_visibility_mode(u16 hud_visibility_mode);
 
 /* Extra Ability Tunic Colors */
 #define TUNIC_KOKIRI_R                  (*(u8*)            0x800F7AD8)

@@ -660,3 +660,7 @@ Gameplay_InitSkybox:
 .orga 0xAE3848
     j      interface_change_hud_visibility_mode
     nop
+    
+ ;.orga 0xAE42A0
+ ;   j      interface_enable_buttons
+ ;   nop

@@ -7,7 +7,7 @@ extern u16  dpad_x, dpad_y, play_sfx;
 extern u8   compare_frames;
 extern bool fps_switch;
 
-static u16  item_buttons[8]  = { BTN_B, BTN_CLEFT, BTN_CDOWN, BTN_CRIGHT, BTN_DUP, BTN_DRIGHT, BTN_DDOWN, BTN_DLEFT };
+const static u16 item_buttons[8]  = { BTN_B, BTN_CLEFT, BTN_CDOWN, BTN_CRIGHT, BTN_DUP, BTN_DRIGHT, BTN_DDOWN, BTN_DLEFT };
 
 const static s8 gPositions[4][2] = {
     {  0,  -15 },
@@ -27,7 +27,7 @@ const static u8 icon_size     = 12;
 const static u8 icon_size_big = 16;
 const static u8 dpad_offset   = 2;
 
-static z64_action_parameter_t item_actions[] = {
+const static z64_action_parameter_t item_actions[] = {
     PLAYER_IA_DEKU_STICK,          // ITEM_DEKU_STICK
     PLAYER_IA_DEKU_NUT,            // ITEM_DEKU_NUT
     PLAYER_IA_BOMB,                // ITEM_BOMB
@@ -149,20 +149,21 @@ void draw_dpad_actions(z64_disp_buf_t* db, u8 alpha) {
         draw_action(db, DPAD_SET_BUTTON_INDEX(i), gPositions[i][0], gPositions[i][1], gPositionsBig[i][0], gPositionsBig[i][1], alpha);
 }
 
-bool can_use_ocarina() {
-    if (z64_game.pause_ctxt.state != PAUSE_STATE_OFF || (z64_link.state_flags_1 & BLOCK_ITEMS) || z64_game.restriction_flags.ocarina)
-        return false;
-    for (u8 i=0; i<24; i++)
-        if (z64_file.items[i] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[i] == Z64_ITEM_OCARINA_OF_TIME)
-            return true;
-    return false;
+bool can_use_child_trade() {
+    if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_KEATON_MASK && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && OPTION_ACTIVE(1, SAVE_MASK_ABILITIES, CFG_DEFAULT_MASK_ABILITIES))
+        return  (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS_BUT_SWIMMING) && !z64_game.restriction_flags.trade_items);
+    else return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS)              && !z64_game.restriction_flags.trade_items);
 }
 
-bool can_use_child_trade()     { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.trade_items &&  (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG  && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) ); }
-bool can_use_adult_trade()     { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.trade_items &&  (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK)   ); }
-bool can_use_items()           { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.all                                    ); }
-bool can_use_lens()            { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) && (!z64_game.restriction_flags.all || z64_game.scene_index == 0x0010) ); }
-bool can_use_farores_wind()    { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.farores_wind                           ); }
+bool can_use_hookshot() {
+    return (!z64_game.pause_ctxt.state && !z64_game.restriction_flags.all && (!(z64_link.state_flags_1 & BLOCK_ITEMS) || (!(z64_link.state_flags_1 & BLOCK_ITEMS_BUT_SWIMMING) && Player_GetEnvironmentalHazard(&z64_game) == PLAYER_ENV_HAZARD_UNDERWATER_FLOOR)));
+}
+
+bool can_use_adult_trade()     { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.trade_items                          ); }
+bool can_use_items()           { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.all                                  ); }
+bool can_use_ocarina()         { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.ocarina                              ); }
+bool can_use_lens()            { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) && (!z64_game.restriction_flags.all || z64_game.scene_index == 0x10) ); }
+bool can_use_farores_wind()    { return (!z64_game.pause_ctxt.state && !(z64_link.state_flags_1 & BLOCK_ITEMS) &&  !z64_game.restriction_flags.farores_wind                         ); }
 bool is_semi_alpha(u8 alpha)   { return (!z64_game.pause_ctxt.state && alpha >= 0x46); }
 
 void run_equipment_action(z64_game_t* game, z64_link_t* link, u8 action) {
@@ -173,15 +174,15 @@ void run_equipment_action(z64_game_t* game, z64_link_t* link, u8 action) {
     else if (action == Z64_SLOT_KOKIRI_TUNIC)
         toggle_tunic(game, link);
     else if (action == Z64_SLOT_GORON_TUNIC)
-        swap_goron_tunic(game, link);
+        swap_tunic(game, link, 6, 2);
     else if (action == Z64_SLOT_ZORA_TUNIC)
-        swap_zora_tunic(game, link);
+        swap_tunic(game, link, 5, 3);
     else if (action == Z64_SLOT_KOKIRI_BOOTS)
         toggle_boots(game, link);
     else if (action == Z64_SLOT_IRON_BOOTS)
-        swap_iron_boots(game, link);
+        swap_boots(game, link, 2, 2);
     else if (action == Z64_SLOT_HOVER_BOOTS)
-        swap_hover_boots(game, link);
+        swap_boots(game, link, 1, 3);
 }
 
 void draw_action(z64_disp_buf_t* db, z64_slot_t action, s8 icon_x, s8 icon_y, s8 icon_big_x, s8 icon_big_y, u8 alpha) {
@@ -209,9 +210,11 @@ void draw_action(z64_disp_buf_t* db, z64_slot_t action, s8 icon_x, s8 icon_y, s8
         else if (item >= Z64_ITEM_POCKET_EGG && item <= Z64_ITEM_CLAIM_CHECK)
             draw_adult_trade_icon(db, item, icon_x, icon_y, alpha);
         else if (item == Z64_ITEM_FAIRY_OCARINA || item == Z64_ITEM_OCARINA_OF_TIME)
-            draw_ocarina_icon(db, item, icon_x, icon_y, alpha);
+            draw_item_icon(db, item, action, icon_x, icon_y, can_use_ocarina(), alpha);
+        else if (item == Z64_ITEM_HOOKSHOT || item == Z64_ITEM_LONGSHOT)
+            draw_item_icon(db, item, action, icon_x, icon_y, can_use_hookshot(), alpha);
         else if (item == Z64_ITEM_LENS)
-            draw_item_icon(db, Z64_ITEM_LENS, Z64_SLOT_LENS, icon_x, icon_y, can_use_items(), alpha);
+            draw_item_icon(db, Z64_ITEM_LENS, Z64_SLOT_LENS, icon_x, icon_y, can_use_lens(), alpha);
         else if (item == Z64_ITEM_FARORES_WIND)
             draw_item_icon(db, Z64_ITEM_FARORES_WIND, Z64_SLOT_FARORES_WIND, icon_x, icon_y, can_use_farores_wind(), alpha);
         else if (item == Z64_ITEM_FIRE_ARROW || item == Z64_ITEM_ICE_ARROW || item == Z64_ITEM_LIGHT_ARROW)
@@ -381,37 +384,18 @@ void toggle_boots(z64_game_t* game, z64_link_t* link) {
         change_boots(game, link, boots);
 }
 
-void swap_goron_tunic(z64_game_t* game, z64_link_t* link) {
-    if (!z64_file.goron_tunic || (z64_file.link_age && !CFG_ALLOW_BOOTS) )
+void swap_tunic(z64_game_t* game, z64_link_t* link, u8 shift, u8 equip) {
+    if (!z64_file.equipment & (1 < shift) || (z64_file.link_age && !CFG_ALLOW_TUNIC) )
         return;
-    z64_file.equip_tunic = z64_file.equip_tunic == 2 ? 1 : 2;
+    z64_file.equip_tunic = z64_file.equip_tunic == equip ? 1 : equip;
     change_equipment(game, link);
 }
 
-void swap_zora_tunic(z64_game_t* game, z64_link_t* link) {
-    if (!z64_file.zora_tunic || (z64_file.link_age && !CFG_ALLOW_BOOTS) )
+void swap_boots(z64_game_t* game, z64_link_t* link, u8 shift, u8 equip) {
+    if (!z64_file.equipment & (1 < shift) || (z64_file.link_age && !CFG_ALLOW_BOOTS) )
         return;
-    z64_file.equip_tunic = z64_file.equip_tunic == 3 ? 1 : 3;
+    z64_file.equip_boots = z64_file.equip_boots == equip ? 1 : equip;
     change_equipment(game, link);
-}
-
-void swap_iron_boots(z64_game_t* game, z64_link_t* link) {
-    if (!z64_file.iron_boots || (z64_file.link_age && !CFG_ALLOW_BOOTS) )
-        return;
-    z64_file.equip_boots = z64_file.equip_boots == 2 ? 1 : 2;
-    change_equipment(game, link);
-}
-
-void swap_hover_boots(z64_game_t* game, z64_link_t* link) {
-    if (!z64_file.hover_boots || (z64_file.link_age && !CFG_ALLOW_BOOTS) )
-        return;
-    z64_file.equip_boots = z64_file.equip_boots == 3 ? 1 : 3;
-    change_equipment(game, link);
-}
-
-void use_item(z64_slot_t slot, u8 usability) {
-    if (usability)
-        Player_UseItem(&z64_game, &z64_link, z64_file.items[slot]);
 }
 
 void draw_sword_icon(z64_disp_buf_t* db, s8 icon_x, s8 icon_y, u8 alpha) {
@@ -451,52 +435,38 @@ void draw_equipment_icon(z64_disp_buf_t* db, s8 icon_x, s8 icon_y, s8 icon_big_x
 }
 
 void draw_child_trade_icon(z64_disp_buf_t* db, z64_item_t item, s8 icon_x, s8 icon_y, s8 icon_big_x, s8 icon_big_y, u8 alpha) {
-    if (item >= Z64_ITEM_WEIRD_EGG && item <= Z64_ITEM_MASK_OF_TRUTH) {
-        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!can_use_child_trade() && is_semi_alpha(alpha)) ? 0x46 : alpha);
-        draw_dpad_icon(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], z64_link.current_mask > 0 ? icon_big_x : icon_x, z64_link.current_mask > 0 ?  icon_big_y : icon_y, z64_link.current_mask > 0 ? icon_size_big : icon_size);
-    }
+    bool mask = (z64_link.current_mask == item - Z64_ITEM_KEATON_MASK + 1);
+    gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!can_use_child_trade() && is_semi_alpha(alpha)) ? 0x46 : alpha);
+    draw_dpad_icon(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], mask ? icon_big_x : icon_x, mask ? icon_big_y : icon_y, mask ? icon_size_big : icon_size);
 }
 
 void draw_adult_trade_icon(z64_disp_buf_t* db, z64_item_t item, s8 icon_x, s8 icon_y, u8 alpha) {
-    if (item >= Z64_ITEM_POCKET_EGG && item <= Z64_ITEM_CLAIM_CHECK) {
-        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!can_use_adult_trade() && is_semi_alpha(alpha)) ? 0x46 : alpha);
-        draw_dpad_icon(db, &items_sprite, z64_file.items[Z64_SLOT_ADULT_TRADE], icon_x, icon_y, icon_size);
-    }
-}
-
-void draw_ocarina_icon(z64_disp_buf_t* db, z64_item_t item, s8 icon_x, s8 icon_y, u8 alpha) {
-    if (item == Z64_ITEM_FAIRY_OCARINA || item == Z64_ITEM_OCARINA_OF_TIME) {
-        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!can_use_ocarina() && is_semi_alpha(alpha)) ? 0x46 : alpha);
-        draw_dpad_icon(db, &items_sprite, item, icon_x, icon_y, icon_size);
-    }
+    gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!can_use_adult_trade() && is_semi_alpha(alpha)) ? 0x46 : alpha);
+    draw_dpad_icon(db, &items_sprite, z64_file.items[Z64_SLOT_ADULT_TRADE], icon_x, icon_y, icon_size);
 }
 
 void draw_arrow_icon(z64_disp_buf_t* db, z64_item_t item, z64_slot_t slot, s8 icon_x, s8 icon_y, bool usability, u8 alpha) {
-    if (z64_file.items[slot] == item) {
-        z64_item_t compare = z64_file.items[slot];
-        if (compare == item) {
-            switch (compare) {
-                case Z64_ITEM_FIRE_ARROW:
-                    compare = Z64_ITEM_BOW_FIRE_ARROW;
-                    break;
-                case Z64_ITEM_ICE_ARROW:
-                    compare = Z64_ITEM_BOW_ICE_ARROW;
-                    break;
-                case Z64_ITEM_LIGHT_ARROW:
-                    compare = Z64_ITEM_BOW_LIGHT_ARROW;
-                    break;
-            }
-            gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!usability && is_semi_alpha(alpha)) ? 0x46 : alpha);
-            draw_dpad_icon(db, &items_sprite, compare, icon_x, icon_y, icon_size);
+    z64_item_t compare = z64_file.items[slot];
+    if (compare == item) {
+        switch (compare) {
+            case Z64_ITEM_FIRE_ARROW:
+                compare = Z64_ITEM_BOW_FIRE_ARROW;
+                break;
+            case Z64_ITEM_ICE_ARROW:
+                compare = Z64_ITEM_BOW_ICE_ARROW;
+                break;
+            case Z64_ITEM_LIGHT_ARROW:
+                compare = Z64_ITEM_BOW_LIGHT_ARROW;
+                break;
         }
+        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!usability && is_semi_alpha(alpha)) ? 0x46 : alpha);
+        draw_dpad_icon(db, &items_sprite, compare, icon_x, icon_y, icon_size);
     }
 }
 
 void draw_item_icon(z64_disp_buf_t* db, z64_item_t item, z64_slot_t slot, s8 icon_x, s8 icon_y, bool usability, u8 alpha) {
-    if (z64_file.items[slot] == item) {
-        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!usability && is_semi_alpha(alpha)) ? 0x46 : alpha);
-        draw_dpad_icon(db, &items_sprite, z64_file.items[slot], icon_x, icon_y, icon_size);
-    }
+    gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, (!usability && is_semi_alpha(alpha)) ? 0x46 : alpha);
+    draw_dpad_icon(db, &items_sprite, z64_file.items[slot], icon_x, icon_y, icon_size);
 }
 
 void draw_dpad_icon(z64_disp_buf_t* db, sprite_t *sprite, u8 icon, s8 x, s8 y, u8 size) {
@@ -551,6 +521,7 @@ void player_process_item_buttons(z64_link_t* link, z64_game_t* game) {
             if (!player_item_is_in_use(link, B_BTN_ITEM)           && !player_item_is_in_use(link, C_BTN_ITEM(0))        && !player_item_is_in_use(link, C_BTN_ITEM(1))        && !player_item_is_in_use(link, C_BTN_ITEM(2)) && \
                 !player_item_is_in_use(link, get_dpad_btn_item(0)) && !player_item_is_in_use(link, get_dpad_btn_item(1)) && !player_item_is_in_use(link, get_dpad_btn_item(2)) && !player_item_is_in_use(link, get_dpad_btn_item(3))) {
                 Player_UseItem(game, link, Z64_ITEM_NONE);
+                use_item_check = 0x10C0;
                 return;
             }
 
@@ -574,7 +545,10 @@ void player_process_item_buttons(z64_link_t* link, z64_game_t* game) {
         }
         else {
             link->held_item_button = index;
+            if (item >= Z64_ITEM_KEATON_MASK && item <= Z64_ITEM_MASK_OF_TRUTH && OPTION_ACTIVE(1, SAVE_MASK_ABILITIES, CFG_DEFAULT_MASK_ABILITIES))
+                use_item_check = 0x1500;
             Player_UseItem(game, link, item);
+            use_item_check = 0x10C0;
         }
     }
 }
@@ -627,6 +601,8 @@ z64_item_t get_dpad_btn_item(u8 button) {
     else if (can_use_child_trade() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_WEIRD_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_SOLD_OUT))
         return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
     else if (can_use_adult_trade() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_POCKET_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_CLAIM_CHECK))
+        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    else if (can_use_hookshot() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_HOOKSHOT || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LONGSHOT) )
         return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
     else if (can_use_lens() && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LENS)
         return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];

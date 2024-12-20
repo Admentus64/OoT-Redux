@@ -905,9 +905,9 @@ void interface_update_hud_alphas(z64_game_t* game, u8 dimming_alpha) {
         game->alpha_channels.minimap = 255;
 }
 
-void interface_change_hud_visibility_mode(z64_hud_visibility_mode_t hud_visibility_mode) {
-    if (hud_visibility_mode > z64_file.hud_visibility_mode) {
-        z64_hud_visibility_mode_t mode = hud_visibility_mode;
+void interface_change_hud_visibility_mode(u16 hud_visibility_mode) {
+    if (hud_visibility_mode != z64_file.hud_visibility_mode) {
+        u8 mode = hud_visibility_mode;
         
         if (!z64_game.pause_ctxt.state) {
             if (OPTION_VALUE(1, 0, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD) && last_interface >= 0) {

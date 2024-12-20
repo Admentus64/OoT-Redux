@@ -1406,7 +1406,7 @@ typedef enum {
 /* game context */
 typedef struct {
   z64_ctxt_t       common;                 /* 0x00000 */
-  uint16_t         scene_index;            /* 0x000A4 */
+  int16_t          scene_index;            /* 0x000A4 */
   uint8_t          scene_config;           /* 0x000A6  */
   char             unk_00_[0x09];          /* 0x000A7 */
   void*            scene_segment;          /* 0x000B0 */
@@ -1484,7 +1484,9 @@ typedef struct {
     uint16_t       magic;
     uint16_t       minimap;
   }                alpha_channels;        /* 0x10732 */
-  char             unk_13_[0x000C];       /* 0x10746 */
+  char             unk_13_[0x000A];       /* 0x10746 */
+  uint8_t          unk_260;               /* 0x10750 */
+  uint8_t          unk_261;               /* 0x10750 */
   struct {
     uint8_t        unk_00_;
     uint8_t        b_button;
@@ -1531,7 +1533,9 @@ typedef struct {
   uint8_t          shootingGalleryStatus;  /* 0x11E5C */
   uint8_t          bombchuBowlingStatus;   /* 0x11E5D */
   uint8_t          fadeout_transition;     /* 0x11E5E */
-                                           /* 0x11E5F */
+  char             unk_24_[0x5BC];         /* 0x11E5F */
+  uint8_t          transition_mode;        /* 0x1241B */
+                                           /* 0x12518 */
 } z64_game_t;
 
 typedef struct {
