@@ -448,13 +448,18 @@ void handle_map_select() {
             }
             
             if (current_menu_indexes.main_index == 5) {
-                u8 age                =  z64_file.link_age;
-                z64_file.link_age     =  z64_game.link_age;
-                z64_game.link_age     = !z64_game.link_age;
-                z64_file.link_age     =  age;
-                z64_file.respawn_flag =  z64_game.fadeout_transition = 2;
-                warp_to_scene_index   =  z64_file.entrance_index;
-                z64_Play_SetupRespawnPoint(&z64_game, 1, 0xDFF);
+                z64_file.link_age ^= z64_game.link_age;
+                z64_game.link_age ^= z64_file.link_age;
+                z64_file.link_age ^= z64_game.link_age;
+                z64_game.link_age = !z64_game.link_age;
+                
+                if (z64_game.scene_index <= 0x1A || z64_game.scene_index > 0x3A) {
+                    z64_Play_SetupRespawnPoint(&z64_game, 1, 0xDFF);
+                    z64_file.respawn_flag = 2;
+                }
+                else z64_game.fadeout_transition = 2;
+                
+                warp_to_scene_index = z64_file.entrance_index;
             }
             else if (current_menu_indexes.sub_menu_index < 2)
                 current_menu_indexes.sub_menu_index++;
