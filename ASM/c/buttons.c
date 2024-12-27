@@ -414,6 +414,7 @@ void set_b_button(pad_t pad_pressed) {
         else if    (z64_file.link_age)
             z64_file.child_button_items[0] = item;
         z64_UpdateItemButton(&z64_game, 0);
+        z64_file.equip_sword = 0;
         play_sfx = 0x4808;
     }
 }
