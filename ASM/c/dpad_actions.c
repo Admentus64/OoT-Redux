@@ -223,15 +223,19 @@ void draw_action(z64_disp_buf_t* db, z64_slot_t action, s8 icon_x, s8 icon_y, s8
             draw_item_icon(db, item, action, icon_x, icon_y, can_use_items(), alpha);
         
         if (item != Z64_ITEM_NONE)
-            draw_ammo(db, item, dpad_x + icon_x + dpad_offset, dpad_y + icon_y + dpad_offset + 8, 4, -1, (!can_use_items() && is_semi_alpha(alpha)) ? 0x46 : alpha);
+            draw_ammo(db, item, dpad_x + icon_x + dpad_offset, dpad_y + icon_y + dpad_offset + 8, 4, -1, (!can_use_items() && is_semi_alpha(alpha)) ? 0x46 : alpha, false);
     }
 }
 
-void draw_ammo(z64_disp_buf_t* db, u8 item, u16 x, u16 y, u8 size, s8 spacing, u8 alpha) {
-    s8  ammo    = -1;
+void draw_ammo(z64_disp_buf_t* db, u8 item, u16 x, u16 y, u8 size, s8 spacing, u8 alpha, bool b_button) {
+    s8 ammo     = -1;
     u8 capacity =  0;
     
-    if (item == z64_file.items[Z64_SLOT_FIRE_ARROW] || item == z64_file.items[Z64_SLOT_ICE_ARROW] || item == z64_file.items[Z64_SLOT_LIGHT_ARROW]) {
+    if (item == z64_file.items[Z64_SLOT_SLINGSHOT] && item == Z64_ITEM_SLINGSHOT && !b_button) {
+        ammo     = z64_file.ammo[Z64_SLOT_SLINGSHOT];
+        capacity = z64_capacity.bullet_bag[z64_file.bullet_bag];
+    }
+    else if ( (item == z64_file.items[Z64_SLOT_BOW] && !b_button) || item == z64_file.items[Z64_SLOT_FIRE_ARROW] || item == z64_file.items[Z64_SLOT_ICE_ARROW] || item == z64_file.items[Z64_SLOT_LIGHT_ARROW]) {
         ammo     = z64_file.ammo[Z64_SLOT_BOW];
         capacity = z64_capacity.quiver[z64_file.quiver];
     }
@@ -251,7 +255,7 @@ void draw_ammo(z64_disp_buf_t* db, u8 item, u16 x, u16 y, u8 size, s8 spacing, u
         ammo     = z64_file.ammo[Z64_SLOT_NUT];
         capacity = z64_capacity.nut_upgrade[z64_file.nut_upgrade];
     }
-    else if (item == z64_file.items[Z64_SLOT_BEANS]) {
+    else if (item == z64_file.items[Z64_SLOT_BEANS] && item == Z64_ITEM_BEANS) {
         ammo     = z64_file.ammo[Z64_SLOT_BEANS];
         capacity = 10;
     }

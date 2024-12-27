@@ -36,7 +36,7 @@ bool is_semi_alpha(u8 alpha);
 void  draw_dpad_actions(   z64_disp_buf_t* db,   u8          alpha);
 void  run_equipment_action(z64_game_t*     game, z64_link_t* link,   u8  action);
 void  draw_action(         z64_disp_buf_t* db,   z64_slot_t  action, s8  icon_x, s8  icon_y, s8 icon_big_x, s8 icon_big_y, u8 alpha);
-void  draw_ammo(           z64_disp_buf_t* db,   u8          item,   u16 x,      u16 y,      u8 size,       s8 spacing,    u8 alpha);
+void  draw_ammo(           z64_disp_buf_t* db,   u8          item,   u16 x,      u16 y,      u8 size,       s8 spacing,    u8 alpha, bool b_button);
 
 void toggle_sword( z64_game_t* game, z64_link_t* link);
 void toggle_shield(z64_game_t* game, z64_link_t* link);

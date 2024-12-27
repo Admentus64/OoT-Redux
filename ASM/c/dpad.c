@@ -220,7 +220,7 @@ void draw_dpad() {
     gDPPipeSync(db->p++);
     
     if (OPTION_ACTIVE(2, SAVE_ITEM_ON_B, CFG_DEFAULT_ITEM_ON_B) && CAN_CONTROL_LINK && z64_game.pause_ctxt.state <= PAUSE_STATE_OPENING_2)
-        draw_ammo(db, z64_file.button_items[0], z64_gameinfo.item_ammo_x[0], z64_gameinfo.item_ammo_y[0], 8, -2, z64_game.alpha_channels.b_button);
+        draw_ammo(db, z64_file.button_items[0], z64_gameinfo.item_ammo_x[0], z64_gameinfo.item_ammo_y[0], 8, -2, z64_game.alpha_channels.b_button, true);
     
     if (z64_game.pause_ctxt.state != PAUSE_STATE_OFF) {
         if (CFG_OPTIONS_MENU > 0 && z64_game.pause_ctxt.state == PAUSE_STATE_MAIN) {
