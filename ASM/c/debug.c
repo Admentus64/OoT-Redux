@@ -350,6 +350,7 @@ static progression_t progressions[] = {
     { "Opened Jabu-Jabu",        EVENT,       EVENTCHKINF_OPENED_JABU_JABU,           0                          },
     { "Opened Door of Time",     EVENT,       EVENTCHKINF_OPENED_DOOR_OF_TIME,        0                          },
     { "Pulled Master Sword",     EVENT,       EVENTCHKINF_MASTER_SWORD_CS,            0                          },
+    { "Activated Scarecrow",     EVENT,       EVENTCHKINF_SCARECROW_ACTIVATED,        0                          },
     { "Woken Talon Kakariko",    EVENT,       EVENTCHKINF_TALON_WOKEN_IN_KAKARIKO,    0                          },
     { "Epona Obtained",          EVENT,       EVENTCHKINF_EPONA_OBTAINED,             0                          },
     { "Race Cow Unlocked",       EVENT,       EVENTCHKINF_HORSE_RACE_COW_UNLOCK,      0                          },

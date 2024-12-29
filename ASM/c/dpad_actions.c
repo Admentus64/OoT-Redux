@@ -205,7 +205,7 @@ void draw_action(z64_disp_buf_t* db, z64_slot_t action, s8 icon_x, s8 icon_y, s8
     else if (action <= Z64_SLOT_CHILD_TRADE) {
         u8 item = z64_file.items[action];
         
-        if (item >= Z64_ITEM_WEIRD_EGG && item <= Z64_ITEM_SOLD_OUT)
+        if (item >= Z64_ITEM_WEIRD_EGG && item <= Z64_ITEM_MASK_OF_TRUTH)
             draw_child_trade_icon(db, item, icon_x, icon_y, icon_big_x, icon_big_y, alpha);
         else if (item >= Z64_ITEM_POCKET_EGG && item <= Z64_ITEM_CLAIM_CHECK)
             draw_adult_trade_icon(db, item, icon_x, icon_y, alpha);
@@ -219,6 +219,8 @@ void draw_action(z64_disp_buf_t* db, z64_slot_t action, s8 icon_x, s8 icon_y, s8
             draw_item_icon(db, Z64_ITEM_FARORES_WIND, Z64_SLOT_FARORES_WIND, icon_x, icon_y, can_use_farores_wind(), alpha);
         else if (item == Z64_ITEM_FIRE_ARROW || item == Z64_ITEM_ICE_ARROW || item == Z64_ITEM_LIGHT_ARROW)
             draw_arrow_icon(db, item, action, icon_x, icon_y, can_use_items(), alpha);
+        else if (item == Z64_ITEM_SOLD_OUT)
+            draw_item_icon(db, item, action, icon_x, icon_y, false, alpha);
         else if (item != Z64_ITEM_NONE)
             draw_item_icon(db, item, action, icon_x, icon_y, can_use_items(), alpha);
         
@@ -596,24 +598,35 @@ z64_item_t player_get_item_on_button(z64_game_t* game, u8 index) {
 }
 
 z64_item_t get_dpad_btn_item(u8 button) {
-    if (!(OPTION_ACTIVE(1, SAVE_DPAD, CFG_DEFAULT_DPAD)))
-        Z64_ITEM_NONE;
-    else if (DPAD_SET_BUTTON_INDEX(button) >= Z64_SLOT_KOKIRI_SWORD)
-            Z64_ITEM_NONE;
-    else if (can_use_ocarina() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_OCARINA_OF_TIME) )
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
-    else if (can_use_child_trade() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_WEIRD_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_SOLD_OUT))
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
-    else if (can_use_adult_trade() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_POCKET_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_CLAIM_CHECK))
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
-    else if (can_use_hookshot() && (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_HOOKSHOT || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LONGSHOT) )
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
-    else if (can_use_lens() && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LENS)
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
-    else if (can_use_farores_wind() && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_FARORES_WIND)
-        return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    if (!(OPTION_ACTIVE(1, SAVE_DPAD, CFG_DEFAULT_DPAD)) || DPAD_SET_BUTTON_INDEX(button) >= Z64_SLOT_KOKIRI_SWORD || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_SOLD_OUT)
+        return Z64_ITEM_NONE;
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_OCARINA_OF_TIME) {
+        if (can_use_ocarina())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_WEIRD_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_MASK_OF_TRUTH) {
+        if (can_use_child_trade())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] >= Z64_ITEM_POCKET_EGG && z64_file.items[DPAD_SET_BUTTON_INDEX(button)] <= Z64_ITEM_CLAIM_CHECK) {
+        if (can_use_adult_trade())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_HOOKSHOT || z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LONGSHOT) {
+        if (can_use_hookshot())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_LENS) {
+        if (can_use_lens())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
+    else if (z64_file.items[DPAD_SET_BUTTON_INDEX(button)] == Z64_ITEM_FARORES_WIND) {
+        if (can_use_farores_wind())
+            return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    }
     else if (can_use_items())
         return z64_file.items[DPAD_SET_BUTTON_INDEX(button)];
+    
     return Z64_ITEM_NONE;
 }
 

@@ -2432,7 +2432,7 @@ typedef struct
 #define EVENTCHKINF_99 0x99 // Unused
 #define EVENTCHKINF_9A 0x9A // Unused
 #define EVENTCHKINF_9B 0x9B // Unused
-#define EVENTCHKINF_9C 0x9C
+#define EVENTCHKINF_SCARECROW_ACTIVATED 0x9C
 #define EVENTCHKINF_9D 0x9D // Unused
 #define EVENTCHKINF_9E 0x9E // Unused
 #define EVENTCHKINF_9F 0x9F // Unused

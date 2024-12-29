@@ -48,7 +48,7 @@ void handle_dpad() {
         remove_enemy_spawner();
         remove_falling_rocks_spawner();
         
-        if (z64_link.current_mask == PLAYER_MASK_ZORA && (z64_link.state_flags_1 & PLAYER_STATE1_SWIMMING) && (z64_link.state_flags_2 & PLAYER_STATE2_MOVING) && z64_move_speed > 0x4080)
+        if (z64_link.current_mask == PLAYER_MASK_ZORA && (z64_link.state_flags_1 & PLAYER_STATE1_SWIMMING) && (z64_link.state_flags_2 & PLAYER_STATE2_MOVING) && z64_move_speed > 0x4080 && z64_file.equip_boots != 2)
             z64_move_speed += 0x50;
     }
     
