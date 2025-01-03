@@ -46,21 +46,15 @@ void set_chest_texture(z64_gfx_t *gfx, u8 chest_type, u8 chest_item, Gfx **opa_p
 
     if (OPTION_ACTIVE(1, SAVE_CHEST_CONTENTS, CFG_DEFAULT_CHEST_CONTENTS)) {
         if (IS_LARGE_CHEST) {
-            if (id == CHEST_DUNGEON_MAP || id == CHEST_COMPASS) {
+            if ( (id >= CHEST_FAIRY_BOW && id <= CHEST_BOOMERANG) || (id >= CHEST_HOOKSHOT && id <= CHEST_LENS_OF_TRUTH) || (id >= CHEST_IRON_BOOTS && id <= CHEST_GOLDEN_SCALE) || (id >= CHEST_FIRE_ARROW && id <= CHEST_LIGHT_ARROW) || (id >= CHEST_DINS_FIRE && id <= CHEST_NAYRUS_LOVE)
+                    || id == CHEST_MEGATON_HAMMER || id == CHEST_FAIRY_OCARINA || id == CHEST_MIRROR_SHIELD || id == CHEST_DUNGEON_MAP || id == CHEST_COMPASS) {
                 frontTexture = &LEATHER_CHEST_FRONT_TEXTURE;
-                baseTexture = &LEATHER_CHEST_BASE_TEXTURE;
-            }
-            else if ( (id >= CHEST_FAIRY_BOW && id <= CHEST_BOOMERANG) || (id >= CHEST_HOOKSHOT && id <= CHEST_LENS_OF_TRUTH) || (id >= CHEST_IRON_BOOTS && id <= CHEST_GOLDEN_SCALE) || (id >= CHEST_FIRE_ARROW && id <= CHEST_LIGHT_ARROW) || (id >= CHEST_DINS_FIRE && id <= CHEST_NAYRUS_LOVE)
-                || id == CHEST_MEGATON_HAMMER || id == CHEST_FAIRY_OCARINA || id == CHEST_MIRROR_SHIELD ) {
-                frontTexture = &LEATHER_SYEO_CHEST_FRONT_TEXTURE;
-                baseTexture = &LEATHER_SYEO_CHEST_BASE_TEXTURE;
+                baseTexture  = &LEATHER_CHEST_BASE_TEXTURE;
             }
         }
-        else {
-            if (id == CHEST_SMALL_KEY) { 
-                frontTexture = &KEY_CHEST_FRONT_TEXTURE;
-                baseTexture = &KEY_CHEST_BASE_TEXTURE;
-            }
+        else if (id == CHEST_SMALL_KEY) { 
+            frontTexture = &KEY_CHEST_FRONT_TEXTURE;
+            baseTexture  = &KEY_CHEST_BASE_TEXTURE;
         }
     }
 

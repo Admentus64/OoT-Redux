@@ -5,18 +5,7 @@
 
 extern uint8_t FONT_TEXTURE[];
 extern uint8_t DPAD_TEXTURE[];
-extern uint8_t TRIFORCE_ICON_TEXTURE[];
-extern uint8_t L_BUTTON_PAUSE_SCREEN_TEXTURE[];
 extern uint8_t CFG_WS;
-
-z64_disp_buf_t redux_overlay_db __attribute__ ((aligned (16)));
-
-typedef struct {
-    Gfx redux_overlay[0xF00];
-} ReduxGFXPool;
-
-ReduxGFXPool reduxGfxPools[2];
-uint8_t reduxGfxPoolIndex;
 
 Gfx setup_db[] = {
     gsDPPipeSync(),
@@ -64,8 +53,10 @@ sprite_t triforce_sprite = {
 };
 
 sprite_t l_button_pause_screen_sprite = {
-    NULL, 24, 32, 1,
-    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+    //NULL, 24, 32, 1,
+    //G_IM_FMT_IA, G_IM_SIZ_8b, 1
+    NULL, 16, 16, 1,
+    G_IM_FMT_I, G_IM_SIZ_4b, 1
 };
 
 sprite_t song_note_sprite = {
@@ -194,37 +185,7 @@ void sprite_texture_4b(z64_disp_buf_t *db, sprite_t *sprite, int tile_index, int
     gSPTextureRectangle(db->p++, left * 4, top * 4, (left + width) * 4, (top + height) * 4, G_TX_RENDERTILE, 0, 0, width_factor, height_factor);
 }
 
-void display_buffer_init() {
-    reduxGfxPoolIndex = 0;
-}
-
-void display_buffer_reset() {
-    ReduxGFXPool* pool = &reduxGfxPools[reduxGfxPoolIndex & 1];
-    redux_overlay_db.size = sizeof(pool->redux_overlay);
-    redux_overlay_db.buf = &pool->redux_overlay[0];
-    redux_overlay_db.p = &redux_overlay_db.buf[0];
-}
-
-void close_display_buffer() {
-    //char error_msg[256];
-
-    OPEN_DISPS(z64_ctxt.gfx);
-
-    /*if (((int) redux_overlay_db.p - (int) redux_overlay_db.buf) > redux_overlay_db.size) {
-        sprintf(error_msg, "size = %x\nmax = %x\np = %p\nbuf = %p\nd = %p", ((int) redux_overlay_db.p - (int) redux_overlay_db.buf), redux_overlay_db.size, redux_overlay_db.p, redux_overlay_db.buf, redux_overlay_db.d);
-        Fault_AddHungupAndCrashImpl("Display buffer exceeded!", error_msg);
-    }*/
-
-    gSPEndDisplayList(redux_overlay_db.p++);
-    gSPDisplayList(OVERLAY_DISP++, redux_overlay_db.buf);
-
-    CLOSE_DISPS();
-    reduxGfxPoolIndex++;
-}
-
 void gfx_init() {
-    display_buffer_init();
-    
     if (CFG_WS)
         setup_db[2] = gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, Z64_SCREEN_WIDTH + 104, Z64_SCREEN_HEIGHT);
     
@@ -237,7 +198,12 @@ void gfx_init() {
         NULL, z64_icon_item_24_static_vaddr, z64_icon_item_24_static_vsize
     };
     file_init(&icon_item_24_static);
-
+    
+    file_t nes_font_static = {
+        NULL, z64_nes_font_static_vaddr, z64_nes_font_static_vsize
+    };
+    file_init(&nes_font_static);
+    
     file_t icon_item_static = {
         NULL, z64_icon_item_static_vaddr, z64_icon_item_static_vsize
     };
@@ -268,8 +234,7 @@ void gfx_init() {
     items_sprite.buf                 = icon_item_static.buf;
     quest_items_sprite.buf           = icon_item_24_static.buf;
     dpad_sprite.buf                  = DPAD_TEXTURE;
-    triforce_sprite.buf              = TRIFORCE_ICON_TEXTURE;
-    l_button_pause_screen_sprite.buf = L_BUTTON_PAUSE_SCREEN_TEXTURE;
+    l_button_pause_screen_sprite.buf = nes_font_static.buf          + 0x4100;
     song_note_sprite.buf             = icon_item_static.buf         + 0x88040;
     key_rupee_clock_sprite.buf       = parameter_static.buf         + 0x1E00;
     item_digit_sprite.buf            = parameter_static.buf         + 0x35C0;

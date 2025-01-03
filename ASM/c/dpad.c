@@ -262,7 +262,7 @@ void draw_settings_label(z64_disp_buf_t *db) {
     draw_name_panel(db);
     u16 x = CFG_WS ? pause_screen_hud_offsets[0] + 104 : pause_screen_hud_offsets[0];
     gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, options_alpha);
-    sprite_load_and_draw(db, &l_button_pause_screen_sprite, 0, x + 58, pause_screen_hud_offsets[1] + 3, 14, 18);
+    sprite_load_and_draw(db, &l_button_pause_screen_sprite, 0, x + 58, pause_screen_hud_offsets[1] + 3, 14, 14);
     sprite_load_and_draw(db, &title_text_sprite,            8, x + 10, pause_screen_hud_offsets[1] + 4, 96, 12);
 }
 

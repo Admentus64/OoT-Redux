@@ -19,19 +19,17 @@ void c_init() {
 }
 
 void before_game_state_update() {
-    display_buffer_reset();
     arrow_cycle_handle(&z64_link, &z64_game);
     handle_dpad();
     update_misc_colors();
     update_hud_colors();
 }
 
-void after_game_state_update() { 
+void after_game_state_update() {
     get_health(z64_game.target_actor);
     process_enemy_health();
     draw_dpad();
     handle_restore_mask();
-    close_display_buffer();
 }
 
 void before_skybox_init(z64_game_t* game, s16 skyboxId) {

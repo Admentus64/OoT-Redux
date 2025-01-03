@@ -2066,6 +2066,8 @@ typedef enum {
 #define z64_LinkDamage_addr                     0x8038E6A8
 
 /* rom addresses */
+#define z64_nes_font_static_vaddr               0x00928000
+#define z64_nes_font_static_vsize               0x00004580
 #define z64_icon_item_static_vaddr              0x007BD000
 #define z64_icon_item_static_vsize              0x000888A0
 #define z64_icon_item_24_static_vaddr           0x00846000

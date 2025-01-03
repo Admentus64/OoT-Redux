@@ -32,10 +32,10 @@
 .headersize (0x80400000 - 0x3680000)
 
 .org 0x80400000
-.area 0x200000 //payload max memory
+.area 0x20000 //payload max memory
 PAYLOAD_START:
 
-.area 0x20, 0
+.area 0x10, 0
 REDUX_CONTEXT:
 .word CONFIGURATION_CONTEXT
 .endarea
@@ -50,7 +50,6 @@ REDUX_CONTEXT:
 .include "bgs_fix.asm"
 .include "chus_in_logic.asm"
 .include "dampe.asm"
-;.include "dpad.asm"
 .include "bunny_hood.asm"
 .include "colors.asm"
 .include "damage.asm"
@@ -73,19 +72,11 @@ FONT_TEXTURE:
 .incbin("../resources/font.bin")
 DPAD_TEXTURE:
 .incbin("../resources/dpad32.bin")
-TRIFORCE_ICON_TEXTURE:
-;.incbin("../resources/triforce_sprite.bin")
-L_BUTTON_PAUSE_SCREEN_TEXTURE:
-.incbin("../resources/l_pause_screen_button.bin")
 
 LEATHER_CHEST_FRONT_TEXTURE:
 .incbin("../resources/chests/Leather.front")
 LEATHER_CHEST_BASE_TEXTURE:
 .incbin("../resources/chests/Leather.back")
-LEATHER_SYEO_CHEST_FRONT_TEXTURE:
-.incbin("../resources/chests/Leather Syeo.front")
-LEATHER_SYEO_CHEST_BASE_TEXTURE:
-.incbin("../resources/chests/Leather Syeo.back")
 KEY_CHEST_FRONT_TEXTURE:
 .incbin("../resources/chests/Key.front")
 KEY_CHEST_BASE_TEXTURE:
